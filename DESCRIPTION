@@ -1,0 +1,14 @@
+Package: rino
+Version: 0.5-0
+Date: 2008-08-03
+Title: Curt Signorino's R Code
+Author: Jeffrey B. Arnold <jarnol7@mail.rochester.edu>
+Maintainer: Jeffrey B. Arnold <jarnold7@mail.rochester.edu> 
+Depends: R (>= 2.6), methods, stats, graphics, stats4
+Suggests: svUnit
+Description: R Code of Curtis Signorino.
+License: GPL-3
+LazyLoad: true
+LazyData: true
+URL: http://www.rochester.edu/college/psc/signorino/ 
+Packaged: Wed Jan  7 15:35:13 2009; jeff

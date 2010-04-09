@@ -1,0 +1,848 @@
+%%
+%% StrategicModels.tex
+%% 
+%% Made by Jeffrey Arnold
+%% Login   <jeff@Jane>
+%% 
+
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{jrnold}
+
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
+\usepackage{natbib}
+\bibliographystyle{apsr}
+
+\author{Jeffrey B. Arnold}
+\title{MLE Functions for Models in the Rino Package}
+
+\begin{document}
+
+\section{General Procedure}
+
+Supposing that there is agent error and private information, but no regressor error, 
+and that the errors at all information sets are independent the probabilities for
+each action and each outcome are calculated recursively and have a simple form.
+
+\subsection{Notation}
+
+I use as similar a notation as possible to \cite{Signorino2003}.
+
+I make the following assumptions 
+\begin{itemize}
+\item The decisions of agents at each information set are independent.
+
+\item The errors of agents are independent.
+
+\item All information sets are singletons.
+
+\item Binary choices for all action sets, $\abs{A(q)} = 2$ for all $q$.
+\end{itemize}
+
+The discrete choice tree is specified as a set of nodes with an asymmetric precedence
+relation defined over the nodes. 
+Let $Q$ be the set of all nodes, with $q^{0}$ as the initial node. 
+Let $\prec$ be an asymmetric precedence relation, such that $q \prec q'$ if node $q$ immediately precedes
+node $q$ , and $q' \prec q$ if node $q$ immediately follows $q$. 
+For a node $q$, define the set of its immediate successor nodes as $S(q) = {q | q \prec q }$.
+Define the set of terminal nodes as $Q^{t} = \set{q \in Q}{S(q) = \emptyset }$, and the set of action nodes as $Q^{a} = Q \setminus Q^{t}$.
+A path $P(q^{t})$ from the initial node $q^{0}$ to a terminal node $q^{t}$ is a sequence of nodes $q^{0}, \dots, q^{t}$ that connect $q^{0}$ to $q^{t}$ such that for each nonterminal node in the sequence, the following node is its immediate successor. 
+All paths are assumed to be countably finite. 
+
+The set of players is $M$. 
+The player function $\func{\iota}{Q^{a}}{M}$, maps an action node to a player.
+
+Let $a(q)$ be the action that reaches $q$ from its predecessor node, and $A(q) = \set{a(q')}{q' \in S(q)}$ be the sets of all actions available at $q$ for the player assigned to $q$. 
+The set $A = \bigcup_{q} A(q)$ is the set of all actions in the game.
+
+\subsection{Estimation}
+
+Take an action node $q \in Q^{a}$.
+The player at $q$ is $m = \iota(q)$.
+Suppose $q' \in S(q)$ is a successor node of $q$.
+
+First, I will define $\bar{U}_{m}(a(q))$ and $\pi'_{m}(q)$ are the expected utility and expected private information error for player $m$ for choosing the action $a(q)$. 
+These are defined using the recursive formula below.
+For a terminal node $q^{t} \in Q^{t}$, 
+\begin{align*}
+  \bar{U}_{m}(a(q^{t})) &= U_{m}(a(q^{t})) \\
+  \pi'_{m}(q^{t}) &= \pi_{m}(q^{t}) 
+\end{align*}
+Suppose $q' \in S(q)$, then $p(q')$ be the probability that the player whose action it is at $q$ chooses $a(q')$.
+For an action node $q \notin Q^{t}$, they are defined as,
+\begin{align*}
+  \bar{U}_m(a(q)) &= \sum_{q' \in S(q)} p(q') \bar{U}_{m}(a(q')) \\
+  \pi'_m(q) &= \sum_{q' \in S(q)} p(q') \pi'_{m}(q').
+\end{align*}
+
+The utility of player $m$ choosing action $a(q')$ is 
+\begin{align*}
+  U^{*}_{m}(a(q')) &= \bar{U}(a(q')) + \pi'(q') + \alpha(a(q')).
+\end{align*}
+
+Suppose that $S(q) = \{q'_{1}, q'_{2} \}$
+Then the probability that the player will choose $a(q'_{1})$ over $a(q'_{2})$ is
+\begin{align*}
+  p(a(q'_{1})) &= \Pr[ U^{*}_{1}(a_{1}) > U^{*}_{2}(a_{2}) ] \\
+  &=
+    \Pr \left[
+      \sum_{q'' \in S(q'_{1})} p(q') ( \bar{U}_{m}(a(q'')) + \pi_{m}(q'')) + \alpha(a(q'_{1})) 
+    \right. \\
+  &  \left.
+      \qquad  > \sum_{q'' \in S(q'_{2})} p(q') (\bar{U}_{m}(a(q')) + \pi_{m}(q'')) + \alpha(a(q'_{2})) 
+    \right] \\
+  & = \Pr
+  \left[
+    \sum_{q'' \in S(q'_{1})} p(q'') \bar{U}_{m}(a(q'')) - \sum_{q'' \in S(q'_{2})} p(q'') \bar{U}_{m}(a(q'')) \right. \\
+  & \qquad > 
+  \left. 
+    \sum_{q'' \in S(q'_{2})} p(q'') \pi_{m}(q'') + \alpha(a(q'_{2})) -  \sum_{q'' \in S(q'_{1})} p(q'') \pi_{m}(q'') - \alpha(a(q'_{1})) 
+  \right]
+\end{align*}
+
+Then the random variable is the difference between the sum of the agent error and the expected private errors for each action.
+The specific procedure depends on the distributions of the error terms.  
+This has easy closed form solutions if all errors are distributed normally (or all errors are distributed type-1 extreme value ?).
+
+Suppose that all agent errors are normally distributed with mean 0 and variance $\sigma^{2}_{\alpha(a(q))}$ and all private information random variables are distributed with mean 0 and variance $\sigma^{2}_{\pi(q)}$.
+This variance for $\bar{\pi}_{m}(q)$ is 
+\begin{equation*}
+  \sigma^{2}_{\bar{\pi}_{m}(q)} = \sum_{q' \in S(q)} (p(q'))^{2} \sigma^{2}_{\bar{\pi}_{m}(q)}. 
+\end{equation*}
+Thus, 
+\begin{align*}
+  p(a(q'_{1})) &= 
+  \Phi 
+  \left[
+  \frac{
+    \sum_{q'' \in S(q'_{1})} p(q'') \bar{U}_{m}(a(q'')) - \sum_{q'' \in S(q'_{2})} p(q'') \bar{U}_{m}(a(q''))
+}
+{\sqrt{
+    \sigma^{2}_{\bar{\pi}_{m}(q'_{2})} + \sigma^{2}_{\alpha(a(q'_{2}))} 
+    + \sigma^{2}_{\bar{\pi}_{m}(q'_{1})} + \sigma^{2}_{\alpha(a(q'_{1}))}}}
+  \right]
+\end{align*}
+
+TODO, type I EV errors.
+
+\section{Solutions for Specific Models}
+
+In this section, I derive the probabilities for each action in the set of models that are covered by the software STRAT \cite{Signorino2003a}.
+
+\subsection{Model 1-2}
+\label{sec:Model-1-2}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+
+% Define styles for bags and leafs
+\tikzstyle{bag} = [circle, minimum width=3pt, fill]
+\tikzstyle{end} = [circle, minimum width=3pt, fill]
+
+% The sloped option gives rotated edge labels. Personally
+% I find sloped labels a bit difficult to read. Remove the sloped options
+% to get horizontal labels. 
+\begin{tikzpicture}[grow=down, scale=2]
+\node[bag, label=right: {1}] {}
+    child {
+        node[end, label=below: {$Y_{1}$}] {}
+        edge from parent 
+        node[left] {$a_{1}$}
+    }
+    child {
+        node[bag, label=right: {2}] {}        
+        child {
+                node[end, label=below: {$Y_{2}$}] {}
+                edge from parent
+                node[left] {$a_{3}$}
+            }
+            child {
+                node[end, label=below: {$Y_{3}$}] {}
+                edge from parent
+                node[right] {$a_{4}$}
+            }
+        edge from parent         
+        node[right] {$a_{2}$}
+    };
+\end{tikzpicture}
+
+\subsubsection{Private Information}
+
+
+\begin{align*}
+p_{1} &= \Phi
+\left[
+  \frac{U_{1}(Y_{1}) +  p_{3} U_{3}(Y_{2}) - p_{4} U_{1}(Y_{3})}
+  {\sqrt{ \sigma^{2}_{\pi_{11}} + p_{3}^{2} \sigma^{2}_{\pi_{12}} + p_{4}^{2}\sigma^{2}_{\pi_{13}} }}  
+\right] \\
+p_{2} &= 1 - p_{1} \\
+p_{3} &= \Phi
+\left[
+    \frac{U_{2}(Y_{1}) - U_{2}(Y_{2})}{\sqrt{\sigma^{2}_{\pi_{21}} + \sigma^{2}_{\pi_{22}}}}    
+\right] \\
+p_{4} &= 1 - p_{3} \\
+\end{align*}
+
+\subsubsection{Agent Error}
+
+\begin{align*}
+p_{1} &= \Phi
+\left[
+  \frac{U_{1}(Y_{1}) +  p_{3} U_{3}(Y_{2}) - p_{4} U_{1}(Y_{3})}
+  {\sqrt{ \sigma^{2}_{\alpha_{1}} + \sigma^{2}_{\alpha_{2}}}}
+\right] \\
+p_{2} &= 1 - p_{1} \\
+p_{3} &= \Phi
+\left[
+    \frac{U_{2}(Y_{1}) - U_{2}(Y_{2})}{\sqrt{\sigma^{2}_{\alpha_{3}} + \sigma^{2}_{\alpha_{4}}}}
+\right] \\
+p_{4} &= 1 - p_{3} \\
+\end{align*}
+
+
+\subsection{Model 1-2-2}
+\label{sec:Model-1-2-2}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=3cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.8cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+\node[bag, label=right: {1}] {}
+    child {
+        node[end, label=left: {2}] {}
+        child {
+                node[end, label=below: {$Y_{1}$}] {}
+                edge from parent
+                node[left] {$a_{3}$}
+            }
+            child {
+                node[end, label=below: {$Y_{2}$}] {}
+                edge from parent
+                node[right] {$a_{4}$}
+            }
+        edge from parent 
+        node[left] {$a_{1}$}
+    }
+    child {
+        node[bag, label=right: {2}] {}        
+        child {
+                node[end, label=below: {$Y_{3}$}] {}
+                edge from parent
+                node[left] {$a_{5}$}
+            }
+            child {
+                node[end, label=below: {$Y_{4}$}] {}
+                edge from parent
+                node[right] {$a_{6}$}
+            }
+        edge from parent         
+        node[right] {$a_{2}$}
+    };
+\end{tikzpicture}
+
+    Player 1 chooses between options $a_{1}$ and $a_{2}$ . If $a_{1}$ is chosen, the player 2 chooses between
+options $a_{3}$ and $a_{4}$, leading to outcomes $Y_{1}$ and $Y_{2}$ , respectively. If player 1 chooses $a_{2}$ , then player
+2 must choose between options $a_{5}$ and $a_{6}$ , leading to outcomes $Y_{5}$ and $Y_{6}$ , respectively. The steps
+for estimating this are similar to those for Model 1-2.
+
+\subsubsection{Private Information}
+
+
+\begin{align*}
+p_{1} &= \Phi
+\left[
+  \frac{p_{3} U_{1}(Y_{1}) + p_{4} U_{1}(Y_{2}) - p_{5} U_{1}(Y_{3}) - p_{6} U_{1}(Y_{4})}
+  {\sqrt{ p_{3}^{2} \sigma^{2}_{\pi_{11}} + p_{4}^{2} \sigma^{2}_{\pi_{12}}  
++ p_{5}^{2} \sigma^{2}_{\pi_{13}} + p_{6}^{2} \sigma^{2}_{\pi_{14}}
+} }
+\right] \\
+p_{2} &= 1 - p_{1} \\
+p_{3} &= \Phi
+\left[
+    \frac{U_{2}(Y_{1}) - U_{2}(Y_{2})}{\sqrt{\sigma^{2}_{\pi_{21}} + \sigma^{2}_{\pi_{22}}}}    
+\right] \\
+p_{4} &= 1 - p_{3} \\
+p_{5} &= \Phi
+\left[
+    \frac{U_{2}(Y_{3}) - U_{2}(Y_{4})}{\sqrt{\sigma^{2}_{\pi_{23}} + \sigma^{2}_{\pi_{24}}}}    
+\right] \\
+p_{6} &= 1 - p_{5} \\
+\end{align*}
+
+\subsubsection{Agent Error}
+
+\begin{align*}
+p_{1} &= \Phi
+\left[
+  \frac{p_{3} U_{1}(Y_{1}) + p_{4} U_{1}(Y_{2}) - p_{5} U_{1}(Y_{3}) - p_{6} U_{1}(Y_{4})}
+  {\sqrt{ \sigma^{2}_{\alpha_{1}} + \sigma^{2}_{\alpha_{2}}}}
+\right] \\
+p_{2} &= 1 - p_{1} \\
+p_{3} &= \Phi
+\left[
+    \frac{U_{2}(Y_{1}) - U_{2}(Y_{2})}{\sqrt{\sigma^{2}_{\alpha_{3}} + \sigma^{2}_{\alpha_{4}}}}    
+\right] \\
+p_{4} &= 1 - p_{3} \\
+p_{5} &= \Phi
+\left[
+    \frac{U_{2}(Y_{3}) - U_{2}(Y_{4})}{\sqrt{\sigma^{2}_{\alpha_{5}} + \sigma^{2}_{\alpha_{6}}}}    
+\right] \\
+p_{6} &= 1 - p_{5} \\
+\end{align*}
+
+\subsubsection{Model 1-2-3}
+\label{sec:Model-1-2-3}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+  \node[bag, label=right: {1}] {}
+  child {
+    node[end, label=below: {$Y_{1}$}] {}
+    edge from parent 
+    node[left] {$a_{1}$}
+  }
+  child {
+    node[bag, label=right: {2}] {}        
+    child {
+      node[end, label=below: {$Y_{2}$}] {}
+      edge from parent
+      node[left] {$a_{3}$}
+    }
+    child {
+      node[end, label=right: {$3$}] {}
+      child {
+        node[end, label=below: {$Y_{3}$}] {}
+        edge from parent 
+        node[left] {$a_{5}$}
+      }
+      child {
+        node[end, label=below: {$Y_{4}$}] {}
+        edge from parent 
+        node[right] {$a_{6}$}
+      }
+      edge from parent
+      node[right] {$a_{5}$}
+    }
+    edge from parent         
+    node[right] {$a_{2}$}
+  };
+\end{tikzpicture}
+
+
+\subsubsection{Private Information}
+
+\begin{align*}
+  p_{6} &= 1 - p_{5} \\
+  p_{5} &= \Phi
+  \left[
+    \frac{U_{3}(Y_{3}) - U_{3}(Y_{3})}{\sqrt{\sigma^{2}_{\pi_{33}} + \sigma^{2}_{\pi_{34}}}} 
+  \right] \\
+  p_{4} &= 1 - p_{3} \\
+  p_{3} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{2}) - p_{5} U_{2}(Y_{3}) - p_{6} U_{2}(Y_{4})}
+    {\sqrt{\sigma^{2}_{\pi_{22}} + p_{5}^{2} \sigma^{2}_{\pi_{23}} + p_{6}^{2} \sigma^{2}_{\pi_{24}}}} 
+  \right] \\
+  p_{2} &= 1 - p_{1} \\
+  p_{1} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{1}) - p_{3} U_{1}(Y_{2}) - p_{4} \left( p_{5} U_{1}(Y_{3}) + p_{6} U_{1}(Y_{4}) \right)}
+    {\sqrt{\sigma^{2}_{\pi_{11}} + p_{3}^{2} \sigma^{2}_{\pi_{12}} + 
+        p_{4}^{2} \left( p_{5}^{2} \sigma^{2}_{\pi_{13}} + p_{6}^{2} \sigma^{2}_{\pi_{14}}\right) }} 
+  \right] 
+\end{align*}
+
+\subsubsection{Agent Error}
+\begin{align*}
+  p_{5} &= \Phi
+  \left[
+    \frac{U_{3}(Y_{3}) - U_{3}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\alpha_{5}} + \sigma^{2}_{\alpha_{6}}}} 
+  \right] \\
+  p_{3} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{2}) - p_{5} U_{2}(Y_{3}) - p_{6} U_{2}(Y_{4})}
+    {\sqrt{\sigma^{2}_{\alpha_{3}} + \sigma^{2}_{\alpha_{4}}}} 
+  \right] \\
+  p_{1} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{1}) - p_{3} U_{1}(Y_{2}) - p_{4} \left( p_{5} U_{1}(Y_{3}) + p_{6} U_{1}(Y_{4}) \right)}
+    {\sqrt{\sigma^{2}_{\alpha_{1}} + \sigma^{2}_{\alpha_{2}}}} 
+  \right] 
+\end{align*}
+
+\subsection{Model 1-2-1}
+\label{Model-1-2-1}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+  \node[bag, label=right: {1}] {}
+  child {
+    node[end, label=below: {$Y_{1}$}] {}
+    edge from parent 
+    node[left] {$a_{1}$}
+  }
+  child {
+    node[bag, label=right: {2}] {}        
+    child {
+      node[end, label=below: {$Y_{2}$}] {}
+      edge from parent
+      node[left] {$a_{3}$}
+    }
+    child {
+      node[end, label=right: {$1$}] {}
+      child {
+        node[end, label=below: {$Y_{3}$}] {}
+        edge from parent 
+        node[left] {$a_{5}$}
+      }
+      child {
+        node[end, label=below: {$Y_{4}$}] {}
+        edge from parent 
+        node[right] {$a_{6}$}
+      }
+      edge from parent
+      node[right] {$a_{5}$}
+    }
+    edge from parent         
+    node[right] {$a_{2}$}
+  };
+\end{tikzpicture}
+
+
+
+The only difference from Model 1-2-1 in Subsection \ref{sec:Model-1-2-3}, 
+is in the private information case, 
+
+\begin{align*}
+  p_{5} &= \Phi
+  \left[
+    \frac{U_{3}(Y_{3}) - U_{3}(Y_{3})}{\sqrt{\sigma^{2}_{\pi_{13}} + \sigma^{2}_{\pi_{14}}}} 
+  \right]. 
+\end{align*}
+
+\subsection{Model 1-2-1-2}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 3}=[level distance=1cm, sibling distance=1.5cm]
+\tikzstyle{level 3}=[level distance=1cm, sibling distance=1.5cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+  \node[bag, label=right: {1}] {}
+  child {
+    node[end, label=below: {$Y_{1}$}] {}
+    edge from parent 
+    node[left] {$a_{1}$}
+  }
+  child {
+    node[bag, label=right: {2}] {}        
+    child {
+      node[end, label=below: {$Y_{2}$}] {}
+      edge from parent
+      node[left] {$a_{3}$}
+    }
+    child {
+      node[end, label=right: {$1$}] {}
+      child {
+        node[end, label=below: {$Y_{3}$}] {}
+        edge from parent 
+        node[left] {$a_{5}$}
+      }
+      child {
+        node[end, label=right: {$2$}] {}
+        child {
+          node[end, label=below: {$Y_{4}$}] {}
+          edge from parent 
+          node[left] {$a_{7}$}
+        }
+        child {
+          node[end, label=below: {$Y_{5}$}] {}
+          edge from parent 
+          node[right] {$a_{8}$}
+        }
+        edge from parent 
+        node[right] {$a_{6}$}
+      }
+      edge from parent
+      node[right] {$a_{5}$}
+    }
+    edge from parent         
+    node[right] {$a_{2}$}
+  };
+\end{tikzpicture}
+
+
+\subsubsection{Private Information}
+
+\begin{align*}
+  p_{8} &= 1 - p_{7} \\
+  p_{7} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{4}) - U_{2}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\pi_{24}} + \sigma^{2}_{\pi_{25}}}} 
+  \right] \\
+  p_{6} &= 1 - p_{5} \\
+  p_{5} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{3}) - p_{7} U_{2}(Y_{4}) - p_{8} U_{2}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\pi_{12}} + p_{7}^{2} \sigma^{2}_{\pi_{13}} + p_{8}^{2} \sigma^{2}_{\pi_{14}}}} 
+  \right] \\
+  p_{3} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{2}) - p_{5} U_{2}(Y_{3}) - p_{6} \left( p_{7} U_{2}(Y_{4}) + p_{8} U_{2}(Y_{5}) \right)}
+    {\sqrt{\sigma^{2}_{\pi_{22}} + p_{5}^{2} \sigma^{2}_{\pi_{23}} + 
+        p_{6}^{2} \left( p_{7}^{2} \sigma^{2}_{\pi_{24}} + p_{8}^{2} \sigma^{2}_{\pi_{25}}\right) }} 
+  \right] \\
+  p_{1} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{1}) - p_{3} U_{1}(Y_{2}) - p_{4}
+      \left(
+        p_{5} U_{1}(Y_{3}) + p_{6} 
+        \left( 
+          p_{7} U_{1}(Y_{4}) + p_{8} U_{1}(Y_{5}) 
+        \right)
+      \right)
+    }
+    {\sqrt{\sigma^{2}_{\pi_{12}} + p_{4}^{2}
+        \left(
+          p_{5}^{2} \sigma^{2}_{\pi_{13}} + 
+          p_{6}^{2} \left( p_{7}^{2} \sigma^{2}_{\pi_{14}} + p_{8}^{2} \sigma^{2}_{\pi_{15}} \right)
+        \right)}}
+  \right] 
+\end{align*}
+
+\subsubsection{Agent Error}
+
+\begin{align*}
+  p_{8} &= 1 - p_{7} \\
+  p_{7} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{4}) - U_{2}(Y_{5})}
+    {\sqrt{ \sigma^{2}_{\alpha_{7}} + \sigma^{2}_{\alpha_{8}}}}
+  \right] \\
+  p_{8} &= 1 - p_{7} \\
+  p_{5} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{3}) - p_{7} U_{2}(Y_{4}) - p_{8} U_{2}(Y_{5})}
+    {\sqrt{ \sigma^{2}_{\alpha_{5}} + \sigma^{2}_{\alpha_{6}}}}
+  \right] \\
+  p_{4} &= 1 - p_{3} \\
+  p_{3} &= \Phi
+  \left[
+    \frac{U_{2}(Y_{2}) - p_{5} U_{2}(Y_{3}) - p_{6} \left( p_{7} U_{2}(Y_{4}) + p_{8} U_{2}(Y_{5}) \right)}
+    {\sqrt{ \sigma^{2}_{\alpha_{3}} + \sigma^{2}_{\alpha_{4}}}}
+  \right] \\
+  p_{2} &= 1 - p_{1} \\
+  p_{1} &= \Phi
+  \left[
+    \frac{U_{1}(Y_{1}) - p_{3} U_{1}(Y_{2}) - p_{4}
+      \left(
+        p_{5} U_{1}(Y_{3}) + p_{6} \left( p_{7} U_{1}(Y_{4}) + p_{8} U_{1}(Y_{5}) \right)
+      \right)}
+    {\sqrt{ \sigma^{2}_{\alpha_{1}} + \sigma^{2}_{\alpha_{2}}}}
+  \right] 
+\end{align*}
+
+\subsection{Model 1-2-2-1}
+\label{sec:Model-1-2-2-1}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=3cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.8cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+  \node[bag, label=right: {1}] {}
+  child {
+    node[end, label=left: {2}] {}
+    child {
+      node[end, label=below: {$Y_{1}$}] {}
+      edge from parent
+      node[left] {$a_{3}$}
+    }
+    child {
+      node[end, label=left: {$1$}] {}
+      child {
+        node[end, label=below: {$Y_{2}$}] {}
+        edge from parent
+        node[left] {$a_{5}$}
+      }
+      child {
+        node[end, label=below: {$Y_{3}$}] {}
+        edge from parent
+        node[right] {$a_{6}$}
+      }
+      edge from parent
+      node[right] {$a_{4}$}
+    }
+    edge from parent 
+    node[left] {$a_{1}$}
+  }
+  child {
+    node[bag, label=right: {2}] {}        
+    child {
+      node[end, label=below: {$Y_{4}$}] {}
+      edge from parent
+      node[left] {$a_{7}$}
+    }
+    child {
+      node[end, label=below: {$Y_{5}$}] {}
+      edge from parent
+      node[right] {$a_{8}$}
+    }
+    edge from parent         
+    node[right] {$a_{2}$}
+  };
+\end{tikzpicture}
+
+
+
+\subsubsection{Private Information}
+
+\begin{align*}
+  p_{8} =& 1 - p_{7} \\    
+  p_{7} =& \Phi
+  \left[
+    \frac{U_{1}(Y_{2}) - U_{1}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\pi_{12}} + \sigma^{2}_{\pi_{13}}}}
+  \right] \\
+  p_{6} =& 1 - p_{5} \\
+  p_{5} =& \Phi 
+  \left[
+    \frac{U_{2}(Y_{4}) - U_{2}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\pi_{24}} + \sigma^{2}_{\pi_{25}}}}
+  \right] \\
+  p_{4} =& 1 - p_{3} \\
+  p_{3} =& \Phi
+  \left[
+    \frac{U_{2}(Y_{1}) - p_{7}U_{2}(Y_{2}) - p_{8}U_{2}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\pi_{21}} + p_{7}^{2} \sigma^{2}_{\pi_{22}} + p_{8}^{2} \sigma^{2}_{\pi_{23}}}}
+  \right] \\
+  p_{2} =& 1 - p_{1} \\
+  p_{1} =& \Phi
+  \left[
+    \frac{p_{3}U_{1}(Y_{1}) + p_{4}
+      \left(
+        p_{7}U_{1}(Y_{2}) - p_{8}U_{1}(Y_{3})
+      \right)
+    - p_{5} U_{1}(Y_{4}) - p_{6} U_{1}(Y_{5})
+    }
+    {\sqrt{\sigma^{2}_{\pi_{21}} + p_{7}^{2} \sigma^{2}_{\pi_{22}} + p_{8}^{2} \sigma^{2}_{\pi_{23}}}}
+  \right] 
+\end{align*}
+
+\subsubsection{Agent Error}
+
+
+\begin{align*}
+  p_{8} =& 1 - p_{7} \\    
+  p_{7} =& \Phi
+  \left[
+    \frac{U_{1}(Y_{2}) - U_{1}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\alpha_{7}} + \sigma^{2}_{\alpha_{8}}}}
+  \right] \\
+  p_{6} =& 1 - p_{5} \\
+  p_{5} =& \Phi 
+  \left[
+    \frac{U_{2}(Y_{4}) - U_{2}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\alpha_{5}} + \sigma^{2}_{\alpha_{6}}}}
+  \right] \\
+  p_{4} =& 1 - p_{3} \\
+  p_{3} =& \Phi
+  \left[
+    \frac{U_{2}(Y_{1}) - p_{7}U_{2}(Y_{2}) - p_{8}U_{2}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\alpha_{3}} + \sigma^{2}_{\alpha_{4}}}}
+  \right] \\
+  p_{2} =& 1 - p_{1} \\
+  p_{1} =& \Phi
+  \left[
+    \frac{p_{3}U_{1}(Y_{1}) + p_{4}
+      \left(
+        p_{7}U_{1}(Y_{2}) - p_{8}U_{1}(Y_{3})
+      \right)
+    - p_{5} U_{1}(Y_{4}) - p_{6} U_{1}(Y_{5})
+    }
+    {\sqrt{\sigma^{2}_{\alpha_{1}} + \sigma^{2}_{\alpha_{2}}}}
+  \right] 
+\end{align*}
+
+
+\subsection{Model 1-2-2-3-3}
+\label{sec:Model-1-2-2-3-3}
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=1cm, sibling distance=3cm]
+\tikzstyle{level 2}=[level distance=1cm, sibling distance=1.8cm]
+
+\begin{tikzpicture}[grow=down, scale=2]
+  \node[bag, label=right: {1}] {}
+  child {
+    node[end, label=left: {2}] {}
+    child {
+      node[end, label=below: {$Y_{1}$}] {}
+      edge from parent
+      node[left] {$a_{3}$}
+    }
+    child {
+      node[end, label=left: {$3$}] {}
+      child {
+        node[end, label=below: {$Y_{2}$}] {}
+        edge from parent
+        node[left] {$a_{5}$}
+      }
+      child {
+        node[end, label=below: {$Y_{3}$}] {}
+        edge from parent
+        node[right] {$a_{6}$}
+      }
+      edge from parent
+      node[right] {$a_{4}$}
+    }
+    edge from parent 
+    node[left] {$a_{1}$}
+  }
+  child {
+    node[bag, label=right: {2}] {}        
+    child {
+      node[end, label=below: {$Y_{4}$}] {}
+      edge from parent
+      node[left] {$a_{7}$}
+    }
+    child {
+      node[end, label=right: {$3$}] {}
+      child {
+        node[end, label=below: {$Y_{5}$}] {}
+        edge from parent
+        node[left] {$a_{9}$}
+      }
+      child {
+        node[end, label=below: {$Y_{6}$}] {}
+        edge from parent
+        node[right] {$a_{10}$}
+      }
+      edge from parent
+      node[right] {$a_{8}$}
+    }
+    edge from parent         
+    node[right] {$a_{2}$}
+  };
+\end{tikzpicture}
+
+
+\subsubsection{Private Information}
+
+\begin{align*}
+  p_{10} =& 1 - p_{9} \\    
+  p_{9} =& \Phi
+  \left[
+    \frac{U_{3}(Y_{4}) - U_{1}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\pi_{34}} + \sigma^{2}_{\pi_{35}}}}
+  \right] \\
+  p_{8} =& 1 - p_{7} \\    
+  p_{7} =& \Phi
+  \left[
+    \frac{U_{3}(Y_{2}) - U_{3}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\pi_{32}} + \sigma^{2}_{\pi_{33}}}}
+  \right] \\
+  p_{6} =& 1 - p_{5} \\
+  p_{5} =& \Phi
+  \left[
+    \frac{p_{9}U_{2}(Y_{4}) - p_{10}U_{2}(Y_{5}) - U_{2}(Y_{6})}
+    {\sqrt{p_{9}^{2} \sigma^{2}_{\pi_{24}} + p_{10}^{2} \sigma^{2}_{\pi_{25}} + \sigma^{2}_{\pi_{26}}}}
+  \right] \\
+  p_{4} =& 1 - p_{3} \\
+  p_{3} =& \Phi
+  \left[
+    \frac{U_{2}(Y_{1}) - p_{7}U_{2}(Y_{2}) - p_{8}U_{2}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\pi_{21}} + p_{7}^{2} \sigma^{2}_{\pi_{22}} + p_{8}^{2} \sigma^{2}_{\pi_{23}}}}
+  \right] \\
+  p_{2} =& 1 - p_{1} \\
+  p_{1} =& \Phi
+  \left[
+    \frac{p_{3}U_{1}(Y_{1}) + p_{4}
+      \left(
+        p_{7}U_{1}(Y_{2}) - p_{8}U_{1}(Y_{3})
+      \right)
+    - p_{5}
+    \left(
+      p_{9} U_{1}(Y_{4}) - p_{10} U_{1}(Y_{5})
+    \right)
+    - p_{6} U_{1}(Y_{6})
+    }
+    {\sqrt{p_{3}^{2} \sigma^{2}_{\pi_{11}} +
+        p_{4}^{2} \left(
+          p_{7}^{2} \sigma^{2}_{\pi_{12}} + p_{8}^{2} \sigma^{2}_{\pi_{13}}
+        \right) 
+      + p_{5}
+      \left(
+        p_{9}^{2} \sigma^{2}_{\pi_{14}} + p_{8}^{2} \sigma^{2}_{\pi_{15}}
+      \right)
+    + p_{6}^{2} \sigma^{2}_{\pi_{16}}}}
+  \right] 
+\end{align*}
+
+\subsubsection{Agent Error}
+
+\begin{align*}
+  p_{10} =& 1 - p_{9} \\    
+  p_{9} =& \Phi
+  \left[
+    \frac{U_{3}(Y_{4}) - U_{1}(Y_{5})}
+    {\sqrt{\sigma^{2}_{\alpha_{9}} + \sigma^{2}_{\alpha_{10}}}}
+  \right] \\
+  p_{8} =& 1 - p_{7} \\    
+  p_{7} =& \Phi
+  \left[
+    \frac{U_{3}(Y_{2}) - U_{3}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\alpha_{9}} + \sigma^{2}_{\alpha_{10}}}}
+  \right] \\
+  p_{6} =& 1 - p_{5} \\
+  p_{5} =& \Phi
+  \left[
+    \frac{p_{9}U_{2}(Y_{4}) - p_{10}U_{2}(Y_{5}) - U_{2}(Y_{6})}
+    {\sqrt{\sigma^{2}_{\alpha_{9}} + \sigma^{2}_{\alpha_{10}}}}
+  \right] \\
+  p_{4} =& 1 - p_{3} \\
+  p_{3} =& \Phi
+  \left[
+    \frac{U_{2}(Y_{1}) - p_{7}U_{2}(Y_{2}) - p_{8}U_{2}(Y_{3})}
+    {\sqrt{\sigma^{2}_{\alpha_{9}} + \sigma^{2}_{\alpha_{10}}}}
+  \right] \\
+  p_{2} =& 1 - p_{1} \\
+  p_{1} =& \Phi
+  \left[
+    \frac{p_{3}U_{1}(Y_{1}) + p_{4}
+      \left(
+        p_{7}U_{1}(Y_{2}) - p_{8}U_{1}(Y_{3})
+      \right)
+    - p_{5}
+    \left(
+      p_{9} U_{1}(Y_{4}) - p_{10} U_{1}(Y_{5})
+    \right)
+    - p_{6} U_{1}(Y_{6})
+    }
+    {\sqrt{\sigma^{2}_{\alpha_{9}} + \sigma^{2}_{\alpha_{10}}}}
+  \right] 
+\end{align*}
+
+\bibliography{Methods}
+
+\end{document}
+
