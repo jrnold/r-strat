@@ -1,0 +1,94 @@
+#+BIBLIOGRAPHY: ~/texmf/bibtex/bib/Master plain
+#+PROPERTY: Effort_ALL 0 0:10 0:30 1:00 2:00 3:00 4:00 5:00 6:00 7:00 8:00
+#+COLUMNS: %40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM
+* Strat
+
+** Miscellaneous
+
+*** Planning
+    CLOCK: [2010-04-23 Fri 20:45]--[2010-04-23 Fri 20:56] =>  0:11
+
+** Literature Review
+
+*** TODO [#A] Read Sign \cite{Signorino2003}
+    :PROPERTIES:
+    :Effort:   1:00
+    :END:
+*** TODO Read \cite{BasSignorinoEtAl2008}
+    :PROPERTIES:
+    :Effort:   1:00
+    :END: 
+
+*** TODO [#C] Read ~Formula~ package documentation and examples
+    :PROPERTIES:
+    :Effort:   0:30
+    :END:
+
+*** TODO Read ~maxLik~ package documentation and examples
+    :PROPERTIES:
+    :Effort:   1:00
+    :END:
+
+*** TODO Read ~mlogit~ package documentation and examples
+    :PROPERTIES:
+    :Effort:   1:00
+    :END:
+*** TODO [#B] Look at Strat matlab software
+    :PROPERTIES:
+    :Effort:   0:40
+    :END: 
+
+**** Install
+     :PROPERTIES:
+     :Effort:   0:10
+     :END: 
+**** Read See \cite{Signorino2003a}
+     :PROPERTIES:
+     :Effort:   0:30
+     :END:
+**** What its features?
+     :PROPERTIES:
+     :Effort:   0
+     :END:
+**** How utilities and variables specified?
+     :PROPERTIES:
+     :Effort:   0
+     :END:
+
+
+** Features
+
+*** TODO Write formula parser
+    :PROPERTIES:
+    :Effort:   0:10
+    :END: 
+
+Put coefficients into a *player* \times *outcome* \times *term* array
+
+The array will include the union of all terms specified in the model. 
+Constraints will be handled separately and passed to maxLik.
+
+
+* Overview
+#+BEGIN: columnview :hlines 1 :id global
+| Task                                                            | Estimated Effort | CLOCKSUM |
+|-----------------------------------------------------------------+------------------+----------|
+| * Strat                                                         |             5:20 |     0:11 |
+| ** Miscellaneous                                                |                  |     0:11 |
+| *** Planning                                                    |                  |     0:11 |
+| ** Literature Review                                            |             5:10 |          |
+| *** TODO [#A] Read Sign \cite{Signorino2003}                    |             1:00 |          |
+| *** TODO Read \cite{BasSignorinoEtAl2008}                       |             1:00 |          |
+| *** TODO [#C] Read ~Formula~ package documentation and examples |             0:30 |          |
+| *** TODO Read ~maxLik~ package documentation and examples       |             1:00 |          |
+| *** TODO Read ~mlogit~ package documentation and examples       |             1:00 |          |
+| *** TODO [#B] Look at Strat matlab software                     |             0:40 |          |
+| **** Install                                                    |             0:10 |          |
+| **** Read See \cite{Signorino2003a}                             |             0:30 |          |
+| **** What its features?                                         |                0 |          |
+| **** How utilities and variables specified?                     |                0 |          |
+| ** Features                                                     |             0:10 |          |
+| *** TODO Write formula parser                                   |             0:10 |          |
+|-----------------------------------------------------------------+------------------+----------|
+| * Overview                                                      |                  |          |
+#+END:

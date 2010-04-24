@@ -1,0 +1,48 @@
+#+BIBLIOGRAPHY: ~/texmf/bibtex/bib/Master plain
+* Notes for the Strat Package
+** Representing Class of Statistical discrete choice estimators
+
+From \cite{Signorino2003}
+
+Tuple $(Q, <, M, I, A, Y, U, \Omega)$ represents the model
+
+*** Q (nodes)
+*** < ( asymmetric precdence relation)
+*** M (Player set)
+*** A (Action set)
+*** U (Utilities)
+*** Omega (combined error vector)
+
+- outcome variable (factor or multiple binary)
+- formula for the utility for each players each outcome
+- errors
+
+  - simplify by assuming a normal or GIEV distribution
+  - simplify by assuming same distribution of errors for all players
+
+- structure of the game
+- function for actions to players
+
+** Recursive Definition of the Likelihood
+
+Supposing independent errors, the likelihood for a single observation can be defined
+recursively as follows
+
+#+begin_example  
+
+U = utilities for each (player, outcome).
+
+def CalcProbs(actions, U, private_info, p)
+for each node:
+    if action node:
+        for x in successors:
+            CalcProbs(x)
+        p(successor 1) = pnorm( (U(1) - U(2)) / sqrt(pinfo(1) + pinfo(2) + agent(1) + agent(2)))
+        p(successor 2) =  1 (p (successor 1))
+        U(node) = p1 * U1 + p2 * U2
+        pinfo(node) = p1^2
+    if terminal node:
+        U = U(player, outcome)
+        pinfo = pinfo(player, outcome)
+        
+#+end_example
