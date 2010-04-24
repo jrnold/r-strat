@@ -46,3 +46,192 @@ for each node:
         pinfo = pinfo(player, outcome)
         
 #+end_example
+* Strat (Gauss)
+
+Curt Signorino wrote an application in Gauss to estimate a subset of
+strategic models.
+
+The program is available on his website
+
+- [[http://www.rochester.edu/college/psc/signorino/research/strat.zip][Zipped program]]
+- [[http://www.rochester.edu/college/psc/signorino/research/README.txt][README]]
+- [[http://www.rochester.edu/college/psc/signorino/research/stratman.pdf][Documentation]]
+
+STRAT includes some utilities for simple data analysis, but I will just
+focus on the relevant estimation features.
+
+** Uncertainty 
+
+User chooses either Agent Error or Private Information
+
+- Agent error uses *Logit*
+- Private info uses *Probit*
+
+I don't know why he choose different functional forms for the
+different error specifications.
+
+** Models
+
+STRAT does not allow for estimating arbitrary models, user can choose
+among 7 prespecified models.
+
+- 1-2
+- 1-2-2
+- 1-2-1
+- 1-2-3
+- 1-2-1-2
+- 1-2-2-1
+- 1-2-2-3-3
+
+The method he uses to name the models is almost a [[http://en.wikipedia.org/wiki/Binary_tree#Ahnentafel_list][Ahnetafel List]]
+representation of the binary trees. Using a Ahnetafel List
+representation, with "." for a leaf node, the models are.
+
+- (1, . , 2, . , . )
+- (1, 2, ., ., 2, ., . )
+- (1, ., 2, ., 1, ., . )
+- (1, ., 2, ., 3, ., . )
+- (1, ., 2, ., 1, ., 2, ., .)
+- (1, 2, 2, ., 1, ., ., ., .)
+- (1, 2, 2, ., 3, ., 3, ., .)
+
+
+** Setting the model
+
+1. choose data
+2. Choose agent or private error for uncertainty
+3. choose model from above set
+4. specify dependent variable 
+
+   There are several ways to do this in the program.
+   For 1-2, you can specify
+
+   - Y134 (categorical variable taking values 1,3,4)
+   - (Y1 or Y3) or Y4
+   - a1, a2
+
+5. specify regressors for each Y. 
+
+   - outcomes with no parent action node of a player are ignored
+   - user can specify 0 for any utility
+
+** Example Output
+
+#+BEGIN_EXAMPLE
+===============================================================================
+MAXLIK Version 4.0.24 2/10/01 11:03 am
+===============================================================================
+Data Set: EXAMPLE.DAT
+-------------------------------------------------------------------------------
+return code = 0
+normal convergence
+Mean log-likelihood -0.420714
+Number of cases 5000
+Covariance matrix of the parameters computed by the following method:
+Inverse of computed Hessian
+Parameters Estimates Std. err. Est./s.e. Prob. Gradient
+------------------------------------------------------------------
+X11 0.9933 0.0307 32.314 0.0000 0.0000
+X13 1.0174 0.0378 26.886 0.0000 -0.0000
+X14 1.0064 0.0384 26.226 0.0000 0.0000
+X23 0.9590 0.0386 24.866 0.0000 -0.0000
+X24 0.9465 0.0385 24.613 0.0000 0.0000
+
+Correlation matrix of the parameters
+1.000 0.692 0.676 0.012 0.007
+0.692 1.000 0.488 -0.102 -0.097
+0.676 0.488 1.000 -0.085 -0.098
+0.012 -0.102 -0.085 1.000 0.852
+0.007 -0.097 -0.098 0.852 1.000
+Number of iterations 17
+Minutes to convergence 1.14117
+#+END_EXAMPLE
+
+** Post-estimation
+
+Can only choose one action or outcome probability at a time
+
+*** Fitted Values
+
+Evaluate each X at its (min, mean, median, max) while holding all
+other variables at their (min, mean, median, max).
+
+*** 1st Differences
+
+User enters values of independent variables, and 1st differences
+calculated for a single outcome or action.
+
+*** Percent correct
+
+Percent of dependent variable cases that are correctly predicted
+
+#+BEGIN_EXAMPLE
+Dependent Variable: Y134
+
+Empirical Frequency:
+Y1 50.080%
+Y3 24.520%
+Y4 25.400%
+
+Model Fit:
+
+Predicted:
+. . Y1 Y3 Y4 Total
+. Y1 2281 100 123 2504
+
+Observed Y3 144 968 114 1226
+. Y4 145 114 1011 1270
+. Total 2570 1182 1248 5000
+
+Percent Correctly Predicted: 85.200000%
+#+END_EXAMPLE
+
+** Starting Values
+
+user can choose four ways to choose parameter starting values
+
+#+BEGIN_QUOTE
+STVAL controls the method of calculating starting values for the parameter estimates. The choices
+re as follows
+
+- (Default) use a vector of random numbers on the interval (0, 0.5);
+- Prompt user for a vector of numbers;
+- Use a vector of random numbers on the interval (0, 1);
+- Use a vector of random numbers distributed Normal with a mean of 0 and standard deviation
+of 1.
+#+END_QUOTE
+
+** Identification
+
+It doesn't.
+
+#+BEGIN_QUOTE
+STRAT does not constrain you to specify regressors in such a way that the model is guaranteed to be
+identiﬁed, nor does it perform any sort of error checking at this point for identiﬁcation.
+#+END_QUOTE
+\cite{Signorino2003a}
+
+* Formula R package
+
+See vignette included in the package and [[http://www.jstatsoft.org/v34/i01/][Journal of Software]] article.
+
+- *Formula* class, inherits from *formula*
+- adds | operator to separate multiple parts
+- allows all operators on the left and right hand sides of the formula
+
+** Usage notes
+
+- if multiple responses, then ~model.response~ returns ~NULL~;
+  model.response() is not generic, and the authors decided not to
+  overload
+- ~model.part()~ is a new generic. Allows extraction of all varialbes
+  pertaining to specific parts
+- as.Formula can coerce multiple arguments
+#+BEGIN_EXAMPLE
+R> as.Formula(y1 ~ x1, y2 ~ x2, ~ x3)
+y1 | y2 ~ x1 | x2 | x3
+#+END_EXAMPLE
+
+** Example code 
+
+docs give example with an IV regression.
