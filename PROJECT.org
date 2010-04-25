@@ -10,14 +10,24 @@
 
 ** Literature Review
 
-*** TODO [#B] Read \cite{Signorino2003}
+*** DONE Read \cite{Signorino2003}
+    CLOCK: [2010-04-24 Sat 16:19]--[2010-04-24 Sat 16:56] =>  0:37
+    CLOCK: [2010-04-24 Sat 15:00]--[2010-04-24 Sat 15:28] =>  0:28
     :PROPERTIES:
     :Effort:   1:00
     :END:
-*** TODO [#C] Read \cite{BasSignorinoEtAl2008}
+
+Read and took notes. Got distracted trying to derive a model that
+includes all forms of errors. It is trivial for independent errors and
+agent + private info, but after that becomes difficult.
+
+*** DONE Read \cite{BasSignorinoEtAl2008}
+    CLOCK: [2010-04-24 Sat 11:40]--[2010-04-24 Sat 12:33] =>  0:53
     :PROPERTIES:
     :Effort:   1:00
     :END: 
+
+Read and made notes. Only browsed appendix.
 
 *** DONE Read ~Formula~ package documentation and examples
     CLOCK: [2010-04-23 Fri 22:19]--[2010-04-23 Fri 22:58] =>  0:39
@@ -65,6 +75,10 @@ distracted on tree traversal methods.
      :Effort:   0
      :END:
 
+*** TODO Read SignorinoYilmaz2003
+    :PROPERTIES:
+    :Effort:   1:00
+    :END: 
 
 ** Features
 

@@ -235,3 +235,9 @@ y1 | y2 ~ x1 | x2 | x3
 ** Example code 
 
 docs give example with an IV regression.
+* Questions
+
+** How to incorporate non degenerate information sets into the model?
+** Relationship between strategic models and mixed logit?
+
+
