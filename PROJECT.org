@@ -83,15 +83,17 @@ distracted on tree traversal methods.
 ** Features
 
 *** TODO Write formula parser
+    CLOCK: [2010-04-26 Mon 10:25]--[2010-04-26 Mon 10:57] =>  0:32
+    CLOCK: [2010-04-24 Sat 20:48]--[2010-04-25 Sun 01:36] =>  4:48
     :PROPERTIES:
     :Effort:   0:10
     :END: 
 
-Put coefficients into a *player* \times *outcome* \times *term* array
+Put coefficients into a *outcome* \times *param* array
+\times *player* array for easy access.
 
 The array will include the union of all terms specified in the model. 
 Constraints will be handled separately and passed to maxLik.
-
 
 * Overview
 #+BEGIN: columnview :hlines 1 :id global

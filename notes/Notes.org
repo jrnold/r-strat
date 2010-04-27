@@ -239,5 +239,14 @@ docs give example with an IV regression.
 
 ** How to incorporate non degenerate information sets into the model?
 ** Relationship between strategic models and mixed logit?
+* Someday
+
+** Generate the likelihood from the model
+
+- use graph and RGBL package to represent DAG
+- can store data in the closure of the likelihood function
+- generate the likelihood function from the model
+- get rid of extraneous non-active parameters (I think it may make it
+  harder to invert the Hessian)
 
 
