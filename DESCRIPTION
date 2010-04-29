@@ -1,8 +1,8 @@
-Package: rino
-Version: 0.5-0
-Date: 2008-08-03
+Package: strat
+Version: 
+Date: 
 Title: Statistical Strategic Models
-Author: Jeffrey B. Arnold <jarnol7@mail.rochester.edu>
+Author: Jeffrey B. Arnold <jarnold7@mail.rochester.edu>
 Maintainer: Jeffrey B. Arnold <jarnold7@mail.rochester.edu> 
 Depends: R (>= 2.6), methods, stats, graphics, stats4, Formula, maxLik, Matrix
 Suggests: svUnit
